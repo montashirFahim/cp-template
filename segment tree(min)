@@ -1,0 +1,67 @@
+vector<ll>a;
+
+struct segmenttree {
+	//1 base indexed;
+	ll k;
+	vector<ll>seg;
+	segmenttree(int n) {
+		this->k = n;
+		seg.resize(2 * n);
+		fill(seg.begin(), seg.end(), INT64_MAX);
+		for (int i = 0; i < k; i++)seg[k + i] = a[i];
+		for (int i = k - 1; i >= 1; i--)seg[i] = min(seg[2 * i], seg[2 * i + 1]);
+	}
+
+	void update(int pos, ll val) {
+		ll temp = this->k;
+		seg[pos + temp ] = val;
+		for (ll i = (pos + temp) / 2; i >= 1; i /= 2) {
+			seg[i] = min(seg[2 * i], seg[2 * i + 1]);
+		}
+	}
+
+	ll query(int node, int l, int r, int lx, int rx) {
+		if (l > rx || r < lx)return INT64_MAX;
+		if (lx <= l && r <= rx)return seg[node];
+		int mid = (r + l) / 2;
+		ll ans = min(query(2 * node, l, mid, lx, rx), query(2 * node + 1, mid + 1, r, lx, rx));
+		return ans;
+		// return 0;
+	}
+
+};
+
+int main() {
+	ios_base::sync_with_stdio(0);
+	cin.tie(NULL); cout.tie(NULL);
+
+	ll t;
+	cin >> t;
+
+	for (int tc = 1; tc <= t; tc++) {
+		cout << "Case " << tc << ":\n";
+		a.clear();
+
+		int n, q;
+		cin >> n >> q;
+
+		for (int i = 0; i < n; i++) {
+			ll x; cin >> x;
+			a.push_back(x);
+		}
+
+		while (__builtin_popcount(n) != 1) {
+			a.push_back(INT64_MAX);
+			n++;
+		}
+
+		segmenttree a(n);
+
+		while (q--) {
+			ll x, y;
+			cin >> x >> y;
+			cout << a.query(1, 1, n, x, y) << endl;
+		}
+
+	}
+}
