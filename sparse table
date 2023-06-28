@@ -40,6 +40,7 @@ int main() {
 	while ((1LL << k) < n) {
 		k++;
 	}
-
+        build(n,k);
+        //query(l,r,k);
 	return 0;
 }
